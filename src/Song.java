@@ -5,12 +5,14 @@
  * Section 100
  * 
  */
-public class Song implements Comparable<Song> {
+public class Song implements Comparable<Song>, Playable {
 
 	private String artist; // artist performing the song
 	private String title; // title of song
 	private int minutes; // number of min in length
 	private int seconds; // number of sec in length (always less than 60)
+	private String fileName;
+	
 
 	// Getters/Setters for all fields
 
@@ -58,7 +60,11 @@ public class Song implements Comparable<Song> {
 			this.seconds = seconds % 60;
 		}
 	}
-
+	
+	public String getFileName() {
+		return fileName;
+	}
+	
 	// --------------------
 
 	/**
@@ -70,8 +76,8 @@ public class Song implements Comparable<Song> {
 	 * @param title
 	 *            Title of the song
 	 */
-	public Song(String artist, String title) {
-		this(artist, title, 0, 0);
+	public Song(String artist, String title, String fileName) {
+		this(artist, title, 0, 0, fileName);
 	}
 
 	/**
@@ -86,11 +92,12 @@ public class Song implements Comparable<Song> {
 	 * @param seconds
 	 *            Number of seconds in length (Always less than 60)
 	 */
-	public Song(String artist, String title, int minutes, int seconds) {
+	public Song(String artist, String title, int minutes, int seconds, String fileName) {
 		this.artist = artist;
 		this.title = title;
 		this.minutes = minutes;
 		setSeconds(seconds);
+		this.fileName = fileName;
 	}
 
 	/**
@@ -100,7 +107,7 @@ public class Song implements Comparable<Song> {
 	 *            Song to be copied
 	 */
 	public Song(Song s) {
-		this(s.artist, s.title, s.minutes, s.seconds);
+		this(s.artist, s.title, s.minutes, s.seconds, s.fileName);
 	}
 
 	/**
@@ -123,12 +130,13 @@ public class Song implements Comparable<Song> {
 	 */
 	@Override
 	public String toString() {
-		return "{Song: title=" + title + " artist=" + artist + "}";
+		return "{Song: title=" + title + " artist=" + artist + " minutes=" + minutes + " seconds=" + seconds + "}";
 	}
 
 	/**
 	 * Prints to the console that this Song is playing.
 	 */
+	@Override
 	public void play() {
 		System.out.printf("Playing Song: artist=%-20s title=%s\n", artist,
 				title);
@@ -165,6 +173,24 @@ public class Song implements Comparable<Song> {
 	 */
 	public int length() {
 		return minutes * 60 + seconds;
+	}
+
+	@Override
+	public void play(double seconds) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getPlayTimeSeconds() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

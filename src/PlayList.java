@@ -14,10 +14,10 @@ import java.util.Scanner;
  * 	http://docs.oracle.com/javase/tutorial/java/data/numberformat.html -
  * 	For formatting time String
  */
-public class PlayList {
+public class PlayList implements Playable {
 
 	private String name; // contains the name of the playlist
-	private ArrayList<Song> songList; // ArrayList of songs that make up the
+	private ArrayList<Playable> playableList; // ArrayList of songs that make up the
 										// playlist
 
 	// Getters/Setters for all fields
@@ -30,12 +30,12 @@ public class PlayList {
 		this.name = name;
 	}
 
-	public ArrayList<Song> getSongList() {
-		return songList;
+	public ArrayList<Playable> getPlayableList() {
+		return playableList;
 	}
 
-	public void setSongList(ArrayList<Song> songList) {
-		this.songList = songList;
+	public void setPlayableList(ArrayList<Playable> playableList) {
+		this.playableList = playableList;
 	}
 
 	// --------------------
@@ -46,7 +46,7 @@ public class PlayList {
 	 */
 	@Override
 	public String toString() {
-		return "{PlayList name=" + name + " songList=" + songList + "}";
+		return "{PlayList name=" + name + " songList=" + playableList + "}";
 	}
 
 	/**
@@ -64,7 +64,7 @@ public class PlayList {
 	 */
 	public PlayList(String newName) {
 		name = newName;
-		songList = new ArrayList<Song>();
+		playableList = new ArrayList<Playable>();
 	}
 
 	/**
@@ -115,7 +115,7 @@ public class PlayList {
 	 * @return True if the songList was changed, false otherwise.
 	 */
 	public boolean clear() {
-		return songList.removeAll(songList);
+		return playableList.removeAll(playableList);
 	}
 
 	/**
@@ -126,7 +126,7 @@ public class PlayList {
 	 * @return True if the Song was successfully added, false otherwise.
 	 */
 	public boolean addSong(Song s) {
-		return songList.add(s);
+		return playableList.add(s);
 	}
 
 	/**
@@ -138,10 +138,10 @@ public class PlayList {
 	 *         bounds.
 	 */
 	public Song removeSong(int index) {
-		Song s;
+		Playable s;
 		try {
-			s = songList.get(index);
-			songList.remove(index);
+			s = playableList.get(index);
+			playableList.remove(index);
 		} catch (IndexOutOfBoundsException ex) {
 			return null;
 		}
@@ -158,9 +158,9 @@ public class PlayList {
 	 */
 	public Song removeSong(Song s) {
 		Song ret = null;
-		while (songList.contains(s)) {
+		while (playableList.contains(s)) {
 			ret = s;
-			songList.remove(s);
+			playableList.remove(s);
 		}
 		return ret;
 	}
@@ -176,7 +176,7 @@ public class PlayList {
 	public Song getSong(int index) {
 		Song s;
 		try {
-			s = songList.get(index);
+			s = playableList.get(index);
 		} catch (IndexOutOfBoundsException ex) {
 			return null;
 		}
@@ -188,7 +188,7 @@ public class PlayList {
 	 * are equal, then shortest first if both artist and title fields are equal.
 	 */
 	public void sortByArtist() {
-		Collections.sort(songList);
+		Collections.sort(playableList);
 	}
 
 	/**
@@ -196,7 +196,7 @@ public class PlayList {
 	 * order.
 	 */
 	public void play() {
-		for (Song s : songList) {
+		for (Song s : playableList) {
 			s.play();
 		}
 	}
@@ -205,7 +205,7 @@ public class PlayList {
 	 * @return Number of songs in the PlayList.
 	 */
 	public int size() {
-		return songList.size();
+		return playableList.size();
 	}
 
 	/**
@@ -218,7 +218,7 @@ public class PlayList {
 		int seconds = 0;
 		int minutes = 0;
 		int hours = 0;
-		for (Song s : songList) {
+		for (Song s : playableList) {
 			seconds += s.getSeconds();
 			minutes += s.getMinutes();
 		}
@@ -238,7 +238,7 @@ public class PlayList {
 	 */
 	public int getPlayTimeSeconds() {
 		int seconds = 0;
-		for (Song s : songList) {
+		for (Song s : playableList) {
 			seconds += s.length();
 		}
 		return seconds;
@@ -255,6 +255,12 @@ public class PlayList {
 		System.out.println(p);
 		System.out.println(p.totalPlayTime());
 		System.out.println(p.getPlayTimeSeconds());
+	}
+
+	@Override
+	public void play(double seconds) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
