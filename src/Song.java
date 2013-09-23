@@ -132,7 +132,9 @@ public class Song implements Comparable<Song>, Playable {
 	public String toString() {
 		return "{Song: title=" + title + " artist=" + artist + " minutes=" + minutes + " seconds=" + seconds + "}";
 	}
-
+	
+	// Playable Methods
+	
 	/**
 	 * Prints to the console that this Song is playing.
 	 */
@@ -141,6 +143,25 @@ public class Song implements Comparable<Song>, Playable {
 		System.out.printf("Playing Song: artist=%-20s title=%s\n", artist,
 				title);
 	}
+	
+	@Override
+	public void play(double seconds) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getPlayTimeSeconds() {
+		return minutes * 60 + seconds;
+	}
+	
+	// --------------------	
 
 	/**
 	 * Compares this Song's artist and the passed in Song's artist
@@ -165,32 +186,7 @@ public class Song implements Comparable<Song>, Playable {
 		compare = title.compareTo(s.getTitle());
 		if (compare != 0)
 			return compare;
-		return length() - s.length();
-	}
-
-	/**
-	 * @return Length of Song in seconds.
-	 */
-	public int length() {
-		return minutes * 60 + seconds;
-	}
-
-	@Override
-	public void play(double seconds) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int getPlayTimeSeconds() {
-		// TODO Auto-generated method stub
-		return 0;
+		return getPlayTimeSeconds() - s.getPlayTimeSeconds();
 	}
 
 }

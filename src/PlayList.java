@@ -1,7 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Scanner;
 
 /**
@@ -17,14 +16,9 @@ import java.util.Scanner;
 public class PlayList implements Playable {
 
 	private String name; // contains the name of the playlist
-	private ArrayList<Playable> playableList; // ArrayList of songs that make up the
-										// playlist
+	private ArrayList<Playable> playableList; // ArrayList of Playable Objects
 
 	// Getters/Setters for all fields
-
-	public String getName() {
-		return name;
-	}
 
 	public void setName(String name) {
 		this.name = name;
@@ -39,7 +33,7 @@ public class PlayList implements Playable {
 	}
 
 	// --------------------
-
+	
 	/**
 	 * @return String representation of a PlayList specifying the name and song
 	 *         list.
@@ -48,6 +42,46 @@ public class PlayList implements Playable {
 	public String toString() {
 		return "{PlayList name=" + name + " songList=" + playableList + "}";
 	}
+	
+	// Playable Methods
+	
+	/**
+	 * Plays the PlayList by calling play() on each Song in the PlayList in
+	 * order.
+	 */
+	@Override
+	public void play() {
+		for (Playable p : playableList) {
+			p.play();
+		}
+	}
+	
+	@Override
+	public String getName() {
+		return name;
+	}
+	
+	/**
+	 * Returns the total time the PlayList will take as the number of seconds.
+	 * 
+	 * @return Total time of PlayList in seconds.
+	 */
+	@Override
+	public int getPlayTimeSeconds() {
+		int seconds = 0;
+		for (Playable p : playableList) {
+			seconds += p.getPlayTimeSeconds();
+		}
+		return seconds;
+	}
+
+	@Override
+	public void play(double seconds) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	// --------------------	
 
 	/**
 	 * Creates a PlayList named "Untitled"
@@ -101,7 +135,7 @@ public class PlayList implements Playable {
 			time = reader.nextLine().trim().split(":");
 			minutes = Integer.parseInt(time[0]);
 			seconds = Integer.parseInt(time[1]);
-			s = new Song(artist, title, minutes, seconds);
+			s = new Song(artist, title, minutes, seconds, ""); // TODO Fix this method
 			addSong(s);
 			reader.nextLine();
 		}
@@ -138,9 +172,9 @@ public class PlayList implements Playable {
 	 *         bounds.
 	 */
 	public Song removeSong(int index) {
-		Playable s;
+		Song s;
 		try {
-			s = playableList.get(index);
+			s = (Song)playableList.get(index);
 			playableList.remove(index);
 		} catch (IndexOutOfBoundsException ex) {
 			return null;
@@ -176,7 +210,7 @@ public class PlayList implements Playable {
 	public Song getSong(int index) {
 		Song s;
 		try {
-			s = playableList.get(index);
+			s = (Song)playableList.get(index);
 		} catch (IndexOutOfBoundsException ex) {
 			return null;
 		}
@@ -188,17 +222,8 @@ public class PlayList implements Playable {
 	 * are equal, then shortest first if both artist and title fields are equal.
 	 */
 	public void sortByArtist() {
-		Collections.sort(playableList);
-	}
-
-	/**
-	 * Plays the PlayList by calling play() on each Song in the PlayList in
-	 * order.
-	 */
-	public void play() {
-		for (Song s : playableList) {
-			s.play();
-		}
+		// TODO this method
+		// Collections.sort(playableList);
 	}
 
 	/**
@@ -218,7 +243,8 @@ public class PlayList implements Playable {
 		int seconds = 0;
 		int minutes = 0;
 		int hours = 0;
-		for (Song s : playableList) {
+		for (Playable p : playableList) {
+			Song s = (Song)p;
 			seconds += s.getSeconds();
 			minutes += s.getMinutes();
 		}
@@ -230,20 +256,7 @@ public class PlayList implements Playable {
 			return String.format("%02d:%02d", minutes, seconds);
 		return String.format("%02d:%02d:%02d", hours, minutes, seconds);
 	}
-
-	/**
-	 * Returns the total time the PlayList will take as the number of seconds.
-	 * 
-	 * @return Total time of PlayList in seconds.
-	 */
-	public int getPlayTimeSeconds() {
-		int seconds = 0;
-		for (Song s : playableList) {
-			seconds += s.length();
-		}
-		return seconds;
-	}
-
+	
 	/**
 	 * For testing purposes
 	 * 
@@ -255,12 +268,6 @@ public class PlayList implements Playable {
 		System.out.println(p);
 		System.out.println(p.totalPlayTime());
 		System.out.println(p.getPlayTimeSeconds());
-	}
-
-	@Override
-	public void play(double seconds) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }
