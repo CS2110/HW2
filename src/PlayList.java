@@ -1,17 +1,20 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Scanner;
 
 /**
  * 
- * @author Jeffrey Cannon jmc5fm 
- * Homework 1 
+ * @author Jeffrey Cannon jmc5fm
+ * @author Trisha Hajela th5yr 
+ * Homework 2 
  * Section 100
  * 
- * Sources:
- * 	http://docs.oracle.com/javase/tutorial/java/data/numberformat.html -
- * 	For formatting time String
+ *         Sources:
+ *         http://docs.oracle.com/javase/tutorial/java/data/numberformat.html -
+ *         For formatting time String
  */
 public class PlayList implements Playable {
 
@@ -33,21 +36,30 @@ public class PlayList implements Playable {
 	}
 
 	// --------------------
-	
+
 	/**
-	 * @return String representation of a PlayList specifying the name and song
-	 *         list.
+	 * @return String representation of a PlayList specifying the name and
+	 *         playable list.
 	 */
 	@Override
 	public String toString() {
-		return "{PlayList name=" + name + " songList=" + playableList + "}";
+		return "{PlayList name=" + name + " playableList=" + playableList + "}";
 	}
-	
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof PlayList) {
+			PlayList p = (PlayList) o;
+			return this.name.equalsIgnoreCase(p.name);
+		}
+		return false;
+	}
+
 	// Playable Methods
-	
+
 	/**
-	 * Plays the PlayList by calling play() on each Song in the PlayList in
-	 * order.
+	 * Plays the PlayList by calling play() on each Playable object in the
+	 * PlayList in order.
 	 */
 	@Override
 	public void play() {
@@ -55,12 +67,15 @@ public class PlayList implements Playable {
 			p.play();
 		}
 	}
-	
+
+	/**
+	 * @return Name of PlayList
+	 */
 	@Override
 	public String getName() {
 		return name;
 	}
-	
+
 	/**
 	 * Returns the total time the PlayList will take as the number of seconds.
 	 * 
@@ -75,13 +90,20 @@ public class PlayList implements Playable {
 		return seconds;
 	}
 
+	/**
+	 * Plays each Playable in this PlayList for the specified number of seconds.
+	 * 
+	 * @param seconds
+	 *            Number of seconds to play each Playable.
+	 */
 	@Override
 	public void play(double seconds) {
-		// TODO Auto-generated method stub
-		
+		for (Playable p : playableList) {
+			p.play(seconds);
+		}
 	}
-	
-	// --------------------	
+
+	// --------------------
 
 	/**
 	 * Creates a PlayList named "Untitled"
@@ -125,6 +147,7 @@ public class PlayList implements Playable {
 		String title;
 		String artist;
 		String[] time;
+		String filename;
 		int minutes;
 		int seconds;
 
@@ -135,7 +158,14 @@ public class PlayList implements Playable {
 			time = reader.nextLine().trim().split(":");
 			minutes = Integer.parseInt(time[0]);
 			seconds = Integer.parseInt(time[1]);
-			s = new Song(artist, title, minutes, seconds, ""); // TODO Fix this method
+			filename = reader.nextLine().trim();
+			File f = new File(filename);
+			if (!f.exists()) {
+				System.err.println("File not found!");
+				reader.close();
+				return false;
+			}
+			s = new Song(artist, title, minutes, seconds, filename);
 			addSong(s);
 			reader.nextLine();
 		}
@@ -144,9 +174,9 @@ public class PlayList implements Playable {
 	}
 
 	/**
-	 * Removes all songs.
+	 * Removes all Playables.
 	 * 
-	 * @return True if the songList was changed, false otherwise.
+	 * @return True if the playableList was changed, false otherwise.
 	 */
 	public boolean clear() {
 		return playableList.removeAll(playableList);
@@ -164,70 +194,92 @@ public class PlayList implements Playable {
 	}
 
 	/**
-	 * Removes Song at index from the list and returns it.
+	 * Checks if the PlayList passed in is already in this PlayList and adds it
+	 * to this PlayList if it is not.
+	 * 
+	 * @param p
+	 *            PlayList to be added.
+	 * @return True if the PlayList successfully added, false if it is already
+	 *         in the PlayList
+	 */
+	public boolean addPlaylist(PlayList p) {
+		if (playableList.contains(p))
+			return false;
+		return playableList.add(p);
+	}
+
+	/**
+	 * Returns the Playable at the appropriate index.
 	 * 
 	 * @param index
-	 *            Index of the Song to be removed
-	 * @return The Song that was removed, null if the specified index was out of
-	 *         bounds.
+	 *            Index of the Playable to be returned
+	 * @return The Playable at the specified, null if the specified index is out
+	 *         of bounds.
 	 */
-	public Song removeSong(int index) {
-		Song s;
+	public Playable getPlayable(int index) {
+		Playable p;
 		try {
-			s = (Song)playableList.get(index);
-			playableList.remove(index);
+			p = playableList.get(index);
 		} catch (IndexOutOfBoundsException ex) {
 			return null;
 		}
-		return s;
+		return p;
 	}
 
 	/**
-	 * Removes the specified Song from the list and returns it.
+	 * Sorts the class's playable list by name in alphabetical order.
+	 */
+	public void sortByName() {
+		Collections.sort(playableList, new CompareByName());
+	}
+
+	/**
 	 * 
-	 * @param s
-	 *            The Song to be removed
-	 * @return The Song that was removed, null if the specified Song was not
-	 *         found.
-	 */
-	public Song removeSong(Song s) {
-		Song ret = null;
-		while (playableList.contains(s)) {
-			ret = s;
-			playableList.remove(s);
-		}
-		return ret;
-	}
-
-	/**
-	 * Returns the Song at the appropriate index.
+	 * @author Jeffrey Cannon
+	 * @author Trisha Hajela th5yr
 	 * 
-	 * @param index
-	 *            Index of the Song to be returned
-	 * @return The Song at the specified, null if the specified index is out of
-	 *         bounds.
 	 */
-	public Song getSong(int index) {
-		Song s;
-		try {
-			s = (Song)playableList.get(index);
-		} catch (IndexOutOfBoundsException ex) {
-			return null;
+	private class CompareByName implements Comparator<Playable> {
+
+		/**
+		 * @return Value of String's compareTo() method
+		 */
+		@Override
+		public int compare(Playable p1, Playable p2) {
+			return p1.getName().compareTo(p2.getName());
 		}
-		return s;
+
 	}
 
 	/**
-	 * Sorts the class's song list by artist first, then by title if the artists
-	 * are equal, then shortest first if both artist and title fields are equal.
+	 * Sorts the class's playable list by time in ascending order.
 	 */
-	public void sortByArtist() {
-		// TODO this method
-		// Collections.sort(playableList);
+	public void sortByTime() {
+		Collections.sort(playableList, new CompareByTime());
 	}
 
 	/**
-	 * @return Number of songs in the PlayList.
+	 * 
+	 * @author Jeffrey Cannon jmc5fm
+	 * @author Trisha Hajela th5yr
+	 * 
+	 */
+	private class CompareByTime implements Comparator<Playable> {
+
+		/**
+		 * @return Negative value if p1's playing time < p2's playing time; Zero
+		 *         if p1's playing time = p2's playing time; Positive value if
+		 *         p1's playing time > p2's playing time.
+		 */
+		@Override
+		public int compare(Playable p1, Playable p2) {
+			return p1.getPlayTimeSeconds() - p2.getPlayTimeSeconds();
+		}
+
+	}
+
+	/**
+	 * @return Number of Playables in the PlayList.
 	 */
 	public int size() {
 		return playableList.size();
@@ -244,7 +296,7 @@ public class PlayList implements Playable {
 		int minutes = 0;
 		int hours = 0;
 		for (Playable p : playableList) {
-			Song s = (Song)p;
+			Song s = (Song) p;
 			seconds += s.getSeconds();
 			minutes += s.getMinutes();
 		}
@@ -256,7 +308,7 @@ public class PlayList implements Playable {
 			return String.format("%02d:%02d", minutes, seconds);
 		return String.format("%02d:%02d:%02d", hours, minutes, seconds);
 	}
-	
+
 	/**
 	 * For testing purposes
 	 * 

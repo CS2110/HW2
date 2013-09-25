@@ -1,7 +1,10 @@
+import edu.virginia.cs2110.Mp3FilePlayer;
+
 /**
  * 
  * @author Jeffrey Cannon jmc5fm 
- * Homework 1 
+ * @author Trisha Hajela th5yr
+ * Homework 2
  * Section 100
  * 
  */
@@ -12,7 +15,6 @@ public class Song implements Comparable<Song>, Playable {
 	private int minutes; // number of min in length
 	private int seconds; // number of sec in length (always less than 60)
 	private String fileName;
-	
 
 	// Getters/Setters for all fields
 
@@ -60,11 +62,11 @@ public class Song implements Comparable<Song>, Playable {
 			this.seconds = seconds % 60;
 		}
 	}
-	
+
 	public String getFileName() {
 		return fileName;
 	}
-	
+
 	// --------------------
 
 	/**
@@ -92,7 +94,8 @@ public class Song implements Comparable<Song>, Playable {
 	 * @param seconds
 	 *            Number of seconds in length (Always less than 60)
 	 */
-	public Song(String artist, String title, int minutes, int seconds, String fileName) {
+	public Song(String artist, String title, int minutes, int seconds,
+			String fileName) {
 		this.artist = artist;
 		this.title = title;
 		this.minutes = minutes;
@@ -120,7 +123,8 @@ public class Song implements Comparable<Song>, Playable {
 			Song s = (Song) o;
 			return this.artist.equalsIgnoreCase(s.artist)
 					&& this.title.equalsIgnoreCase(s.title)
-					&& this.minutes == s.minutes && this.seconds == s.seconds;
+					&& this.minutes == s.minutes && this.seconds == s.seconds
+					&& this.fileName.equalsIgnoreCase(s.fileName);
 		}
 		return false;
 	}
@@ -130,11 +134,12 @@ public class Song implements Comparable<Song>, Playable {
 	 */
 	@Override
 	public String toString() {
-		return "{Song: title=" + title + " artist=" + artist + " minutes=" + minutes + " seconds=" + seconds + "}";
+		return "{Song: title=" + title + " artist=" + artist + " minutes="
+				+ minutes + " seconds=" + seconds + "}";
 	}
-	
+
 	// Playable Methods
-	
+
 	/**
 	 * Prints to the console that this Song is playing.
 	 */
@@ -142,26 +147,40 @@ public class Song implements Comparable<Song>, Playable {
 	public void play() {
 		System.out.printf("Playing Song: artist=%-20s title=%s\n", artist,
 				title);
+		Mp3FilePlayer player = new Mp3FilePlayer(this.getFileName());
+		player.playAndBlock();
 	}
 	
+	/**
+	 * Plays this for the specified number of seconds.
+	 * 
+	 * @param seconds Number of seconds to play song
+	 */
 	@Override
 	public void play(double seconds) {
-		// TODO Auto-generated method stub
-		
+		System.out.printf("Playing Song: artist=%-20s title=%s\n", artist,
+				title);
+		Mp3FilePlayer player = new Mp3FilePlayer(this.getFileName());
+		player.playAndBlock(seconds);
 	}
-
+	
+	/**
+	 * @return Title of this Song.
+	 */
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.getTitle();
 	}
-
+	
+	/**
+	 * @return Length of Song in seconds.
+	 */
 	@Override
 	public int getPlayTimeSeconds() {
 		return minutes * 60 + seconds;
 	}
-	
-	// --------------------	
+
+	// --------------------
 
 	/**
 	 * Compares this Song's artist and the passed in Song's artist
